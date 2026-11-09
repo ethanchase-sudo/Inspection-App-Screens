@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Inspection — Proposed Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --navy-900:#0A1A33; --navy-800:#0F2547; --navy-700:#16325C; --navy-600:#234574;
+  --ink:#0F1B2D; --ink-2:#4A5770; --ink-3:#8692A6;
+  --line:#E4E8EF; --bg:#F3F5F9; --card:#FFFFFF;
+  --teal:#13A89E; --teal-soft:#E3F5F3; --teal-deep:#0C7F78;
+  --exc:#13A89E; --good:#2F6FD6; --fair:#E09A1A; --poor:#D9473B; --crit:#9B1C3A;
+  --exc-bg:#E3F5F3; --good-bg:#E6EEFB; --fair-bg:#FCF2DF; --poor-bg:#FBE7E5; --crit-bg:#F6E1E6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Manrope',sans-serif;color:var(--ink);background:#DCE2EB;overflow:hidden;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ---------- presentation stage ---------- */
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(1200px 700px at 50% 40%, #EEF2F7 0%, #DCE2EB 70%);
+}
+#canvas{width:1240px;height:1060px;flex:none;position:relative;transform-origin:center center;display:flex;flex-direction:column;align-items:center}
+.deck-head{width:100%;display:flex;justify-content:space-between;align-items:flex-end;padding:0 40px 26px}
+.deck-head .k{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);font-weight:700}
+.deck-head h1{font-size:30px;font-weight:800;letter-spacing:-.02em;color:var(--navy-900);margin-top:6px}
+.deck-head .r{text-align:right;font-size:13px;color:var(--ink-2);line-height:1.6}
+.deck-head .r b{color:var(--navy-900)}
+.phones{display:flex;gap:110px;align-items:flex-start}
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:22px}
+.cap{display:flex;gap:12px;align-items:baseline;width:414px}
+.cap .n{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--teal-deep);font-weight:600}
+.cap .t{font-size:15px;font-weight:700;color:var(--navy-900)}
+.cap .s{font-size:12.5px;color:var(--ink-2);margin-left:auto}
+
+/* ---------- device ---------- */
+.device{width:414px;height:868px;border-radius:62px;background:#0B0F17;padding:12px;position:relative;
+  box-shadow:0 0 0 1.5px #2A3242 inset, 0 50px 90px -30px rgba(10,26,51,.45), 0 20px 40px -20px rgba(10,26,51,.35)}
+.device::before{content:"";position:absolute;left:-3px;top:180px;width:3px;height:64px;border-radius:2px;background:#1A202C}
+.device::after{content:"";position:absolute;right:-3px;top:220px;width:3px;height:96px;border-radius:2px;background:#1A202C}
+.screen{width:390px;height:844px;border-radius:50px;overflow:hidden;position:relative;background:var(--bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:122px;height:35px;background:#000;border-radius:20px;z-index:50}
+.statusbar{position:absolute;top:0;left:0;right:0;height:52px;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:6px 32px 0 40px;font-size:15.5px;font-weight:700;pointer-events:none}
+.statusbar .sys{display:flex;gap:6px;align-items:center}
+.statusbar .bat{width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;opacity:.9;position:relative;padding:1.5px}
+.statusbar .bat i{display:block;height:100%;width:78%;background:currentColor;border-radius:1.5px}
+.statusbar.light{color:#fff}
+.scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:120px}
+.scroll::-webkit-scrollbar{display:none}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#0F1B2D;z-index:60}
+
+svg.lucide{stroke-width:2;flex:none}
+.i14{width:14px;height:14px}.i16{width:16px;height:16px}.i18{width:18px;height:18px}.i20{width:20px;height:20px}.i22{width:22px;height:22px}.i12{width:12px;height:12px}
+
+/* ---------- shared app components ---------- */
+.appbar{display:flex;align-items:center;gap:12px;padding:58px 20px 14px}
+.icon-btn{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);color:var(--navy-800);position:relative}
+.icon-btn.glass{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22);color:#fff;backdrop-filter:blur(12px)}
+.dot-badge{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 2px var(--navy-800)}
+.card{background:var(--card);border-radius:20px;border:1px solid var(--line)}
+.sec{padding:0 16px;margin-top:22px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 4px}
+.sec-h h3{font-size:16px;font-weight:800;letter-spacing:-.01em;color:var(--navy-900)}
+.sec-h .meta{font-size:12.5px;color:var(--ink-3);font-weight:600}
+.sec-h a{font-size:13px;color:var(--teal-deep);font-weight:700;text-decoration:none}
+.chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:8px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.chip.exc{background:var(--exc-bg);color:var(--teal-deep)}
+.chip.good{background:var(--good-bg);color:var(--good)}
+.chip.fair{background:var(--fair-bg);color:#A86E05}
+.chip.poor{background:var(--poor-bg);color:var(--poor)}
+.chip.crit{background:var(--crit-bg);color:var(--crit)}
+.chip.mute{background:#EEF1F5;color:var(--ink-2)}
+.chip .d{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* tab bar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:88px;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-start;padding:10px 10px 0;z-index:30}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--ink-3);width:62px}
+.tab.on{color:var(--navy-800)}
+.tab.on svg{color:var(--teal)}
+.tab-fab{width:54px;height:54px;border-radius:18px;background:var(--navy-800);color:#fff;display:grid;place-items:center;margin-top:-22px;box-shadow:0 10px 22px -8px rgba(15,37,71,.6),0 0 0 5px #fff}
+
+/* ================= SCREEN 1 ================= */
+.hero{position:relative;height:376px;color:#fff;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,26,51,.78) 0%,rgba(10,26,51,.25) 22%,rgba(10,26,51,.05) 36%,rgba(10,26,51,.55) 62%,rgba(10,26,51,.96) 100%)}
+.hero > *{position:relative;z-index:2}
+.hero .appbar{padding-top:58px}
+.hero .appbar .ttl{flex:1;text-align:center;font-size:14px;font-weight:700;letter-spacing:.01em}
+.hero-body{position:absolute;left:0;right:0;bottom:0;padding:0 20px 22px;z-index:2}
+.ref{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);padding:4px 9px;border-radius:8px;backdrop-filter:blur(10px)}
+.hero h2{font-size:25px;font-weight:800;letter-spacing:-.025em;line-height:1.1;margin:10px 0 6px}
+.addr{display:flex;align-items:center;gap:6px;font-size:13px;opacity:.85}
+.facts{display:flex;gap:6px;margin-top:14px}
+.facts span{white-space:nowrap;font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+
+.status-card{margin:-2px 0 0;background:var(--navy-900);padding:4px 20px 22px;color:#fff;border-radius:0 0 28px 28px}
+.stepper{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px 14px}
+.step{display:flex;align-items:center;gap:6px;font-size:11px;white-space:nowrap;font-weight:700;color:rgba(255,255,255,.5)}
+.step .b{width:20px;height:20px;flex:none;border-radius:50%;display:grid;place-items:center;border:1.5px solid rgba(255,255,255,.28);font-size:10px}
+.step.done{color:rgba(255,255,255,.8)}
+.step.done .b{background:var(--teal);border-color:var(--teal);color:#fff}
+.step.cur{color:#fff}
+.step.cur .b{border-color:var(--teal);box-shadow:0 0 0 4px rgba(19,168,158,.25)}
+.step.cur .b::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.step-line{flex:1;min-width:8px;height:1.5px;background:rgba(255,255,255,.18);margin:0 6px}
+.stepper{padding:12px 12px!important}
+.step-line.done{background:var(--teal)}
+.inspector{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:12px;color:rgba(255,255,255,.7)}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#2E5A92,#13A89E);display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex:none}
+.inspector b{color:#fff;font-weight:700}
+.sync{margin-left:auto;display:flex;align-items:center;gap:5px;color:#7FE0D6;font-weight:600}
+
+.overview{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ov{padding:16px;position:relative}
+.ov .lab{font-size:11.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}
+.gauge{position:relative;width:118px;height:66px;margin:12px auto 0}
+.gauge svg{width:118px;height:66px;display:block}
+.gauge .val{position:absolute;left:0;right:0;bottom:-2px;text-align:center}
+.gauge .val b{font-size:24px;font-weight:800;letter-spacing:-.03em;color:var(--navy-900)}
+.gauge .val span{font-size:12px;color:var(--ink-3);font-weight:700}
+.ov .verdict{text-align:center;margin-top:8px}
+.ring{width:84px;height:84px;margin:10px auto 0;position:relative}
+.ring svg{width:84px;height:84px;transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .val b{font-size:21px;font-weight:800;letter-spacing:-.03em;color:var(--navy-900);display:block;line-height:1}
+.ring .val span{font-size:10.5px;color:var(--ink-3);font-weight:700}
+.segs{display:flex;gap:3px;margin-top:10px}
+.segs i{flex:1;height:5px;border-radius:3px;background:#E7EBF1}
+.segs i.on{background:var(--teal)}
+.ov .sub{font-size:11.5px;color:var(--ink-2);text-align:center;margin-top:7px;font-weight:600}
+
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.act{padding:14px 10px 13px;display:flex;flex-direction:column;align-items:flex-start;gap:12px;border-radius:18px;background:var(--card);border:1px solid var(--line);font-size:12.5px;font-weight:700;color:var(--navy-900);line-height:1.25}
+.act .ib{width:38px;height:38px;border-radius:12px;display:grid;place-items:center}
+.act.primary{background:var(--navy-800);border-color:var(--navy-800);color:#fff}
+.act.primary .ib{background:rgba(255,255,255,.12);color:#7FE0D6}
+.act .ib.t{background:var(--teal-soft);color:var(--teal-deep)}
+.act .ib.r{background:var(--poor-bg);color:var(--poor)}
+.act small{display:block;font-size:10.5px;font-weight:600;opacity:.6;margin-top:2px}
+
+.cat-list{overflow:hidden}
+.cat{display:flex;align-items:center;gap:12px;padding:13px 14px;border-top:1px solid var(--line)}
+.cat:first-child{border-top:0}
+.cat .ci{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#EEF2F8;color:var(--navy-700);flex:none;position:relative}
+.cat .ci .ok{position:absolute;right:-3px;bottom:-3px;width:16px;height:16px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;box-shadow:0 0 0 2px #fff}
+.cat .nm{flex:1;min-width:0}
+.cat .nm b{display:block;font-size:14px;font-weight:700;color:var(--navy-900)}
+.cat .nm span{font-size:11.5px;color:var(--ink-3);font-weight:600}
+.cat .nm span.warn{color:var(--poor)}
+.cat.open{background:#FAFBFD;flex-wrap:wrap}
+.rate{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;margin-top:4px}
+.rate button{all:unset;cursor:pointer;height:36px;border-radius:11px;border:1px solid var(--line);background:#fff;font-size:11.5px;font-weight:700;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:5px}
+.rate button i{width:7px;height:7px;border-radius:50%}
+.rate button.sel{border-color:var(--fair);background:var(--fair-bg);color:#8F5D03;box-shadow:0 0 0 3px rgba(224,154,26,.15)}
+.cat .attn{width:100%;display:flex;gap:8px;align-items:center;font-size:11.5px;color:var(--ink-2);font-weight:600;margin-top:2px}
+.cat .attn .chip{height:22px}
+
+.obs-card{background:var(--navy-800);border-radius:22px;padding:16px;color:#fff;position:relative;overflow:hidden}
+.obs-card::before{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(19,168,158,.35),transparent 70%)}
+.obs-h{display:flex;align-items:center;gap:10px;position:relative}
+.obs-h b{font-size:15px;font-weight:800}
+.obs-h span{font-size:11.5px;opacity:.6;margin-left:auto;font-weight:600}
+.obs-input{margin-top:12px;background:#fff;border-radius:16px;padding:12px 12px 10px;color:var(--ink);position:relative}
+.obs-input .ph{font-size:13.5px;color:var(--ink-2);line-height:1.45;min-height:40px}
+.obs-input .ph em{font-style:normal;color:var(--ink)}
+.caret{display:inline-block;width:1.5px;height:16px;background:var(--teal);vertical-align:-3px;margin-left:1px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.obs-tools{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.tb{height:32px;padding:0 10px;border-radius:10px;background:#F1F4F8;display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--navy-700)}
+.tb.sq{width:32px;padding:0;justify-content:center}
+.save{margin-left:auto;height:32px;padding:0 14px;border-radius:10px;background:var(--teal);color:#fff;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800}
+.recent{margin-top:12px;display:flex;flex-direction:column;gap:8px;position:relative}
+.rc{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px}
+.rc img{width:44px;height:44px;border-radius:10px;object-fit:cover;flex:none}
+.rc .tx{flex:1;min-width:0}
+.rc .tx b{font-size:12.5px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc .tx span{font-size:11px;opacity:.6;font-weight:600}
+
+/* ================= SCREEN 2 ================= */
+.s2 .appbar{background:var(--bg);position:sticky;top:0;z-index:20;padding-bottom:12px}
+.s2 .appbar .tt{flex:1;min-width:0}
+.s2 .appbar .tt b{display:block;font-size:17px;font-weight:800;letter-spacing:-.015em;color:var(--navy-900)}
+.s2 .appbar .tt span{font-size:12px;color:var(--ink-3);font-weight:600;display:flex;align-items:center;gap:5px}
+.seg{display:flex;background:#E7EBF2;border-radius:13px;padding:3px;margin:0 16px}
+.seg div{flex:1;text-align:center;height:32px;line-height:32px;border-radius:10px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.seg div.on{background:#fff;color:var(--navy-900);box-shadow:0 1px 3px rgba(15,27,45,.1)}
+.seg div em{font-style:normal;font-size:10.5px;color:var(--teal-deep);margin-left:3px}
+
+.photo-card{padding:10px;border-radius:22px}
+.ph-wrap{position:relative;border-radius:15px;overflow:hidden;height:248px;background:#999}
+.ph-wrap img{width:100%;height:100%;object-fit:cover;object-position:50% 40%;display:block;filter:contrast(1.05)}
+.ph-wrap svg.anno{position:absolute;inset:0;width:100%;height:100%}
+.ph-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center}
+.pill-dark{white-space:nowrap;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:9px;background:rgba(10,26,51,.72);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:700}
+.ph-meta{position:absolute;left:10px;bottom:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-end}
+.ph-meta .stamp{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#fff;line-height:1.5;background:rgba(10,26,51,.66);padding:5px 8px;border-radius:8px;backdrop-filter:blur(8px)}
+.tag{position:absolute;display:flex;align-items:center;gap:6px;background:#fff;border-radius:10px;padding:4px 8px 4px 4px;font-size:10.5px;font-weight:700;color:var(--ink);box-shadow:0 6px 16px -4px rgba(0,0,0,.35)}
+.tag .n{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:800}
+.tag small{display:block;font-size:9.5px;color:var(--ink-3);font-weight:600}
+.anno-tools{display:flex;align-items:center;gap:4px;margin-top:10px;padding:0 2px}
+.at{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:var(--ink-2)}
+.at.on{background:var(--navy-800);color:#fff}
+.swatches{display:flex;gap:6px;margin-left:auto;align-items:center;padding-right:4px}
+.swatches i{width:18px;height:18px;border-radius:50%;display:block}
+.swatches i.on{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--poor)}
+
+.strip{display:flex;gap:8px;margin-top:10px}
+.cap-tile{width:72px;height:72px;border-radius:15px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;font-weight:700}
+.cap-tile.cam{background:var(--navy-800);color:#fff}
+.cap-tile.up{border:1.5px dashed #BAC4D3;color:var(--ink-2);background:#fff}
+.thumb{width:72px;height:72px;border-radius:15px;overflow:hidden;position:relative;flex:none}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb.sel{box-shadow:0 0 0 2.5px var(--teal)}
+.thumb .cnt{position:absolute;right:5px;bottom:5px;min-width:18px;height:18px;border-radius:6px;background:var(--poor);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+
+.form{padding:16px}
+.fl{font-size:11.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;display:flex;justify-content:space-between}
+.fl span{text-transform:none;letter-spacing:0;color:var(--teal-deep)}
+.field{border:1px solid var(--line);border-radius:13px;padding:11px 12px;font-size:13.5px;background:#FBFCFD;color:var(--ink);line-height:1.5}
+.field.title{font-weight:700;font-size:14.5px;color:var(--navy-900)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#FBFCFD}
+.mini small{display:block;font-size:10.5px;color:var(--ink-3);font-weight:700}
+.mini b{font-size:12.5px;font-weight:700;color:var(--navy-900);display:flex;align-items:center;gap:5px;margin-top:1px}
+.sev{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sev div{height:54px;border-radius:13px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:700;color:var(--ink-2);background:#fff}
+.sev div .bars{display:flex;gap:2px;align-items:flex-end;height:12px}
+.sev div .bars i{width:4px;border-radius:1.5px;background:#D5DBE5}
+.sev div.sel{border-color:var(--poor);background:var(--poor-bg);color:var(--poor);box-shadow:0 0 0 3px rgba(217,71,59,.13)}
+.sev div.sel .bars i.on{background:var(--poor)}
+
+.recs{display:flex;flex-direction:column}
+.rec{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border-top:1px solid var(--line)}
+.rec:first-child{border-top:0}
+.rec .num{width:24px;height:24px;border-radius:8px;background:var(--navy-800);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;flex:none;margin-top:1px}
+.rec .tx{flex:1}
+.rec .tx b{font-size:13px;font-weight:700;color:var(--navy-900);display:block;line-height:1.35}
+.rec .tx span{font-size:11.5px;color:var(--ink-3);font-weight:600;display:flex;gap:10px;margin-top:4px;align-items:center}
+.rec .tx span em{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.cost{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#F6F8FB;border-top:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink-2)}
+.cost b{color:var(--navy-900);font-size:13px}
+
+.comp-h{display:flex;align-items:center;gap:12px;padding:14px}
+.comp-h .pr{flex:1}
+.comp-h .pr b{font-size:13px;font-weight:700;color:var(--navy-900)}
+.bar{height:6px;background:#E7EBF1;border-radius:3px;margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--teal);border-radius:3px}
+.chk{display:flex;align-items:center;gap:11px;padding:11px 14px;border-top:1px solid var(--line)}
+.box{width:22px;height:22px;border-radius:7px;border:1.5px solid #C7CFDB;display:grid;place-items:center;flex:none;color:#fff}
+.box.on{background:var(--teal);border-color:var(--teal)}
+.chk .tx{flex:1;min-width:0}
+.chk .tx b{font-size:13px;font-weight:700;color:var(--navy-900);display:block}
+.chk .tx span{font-size:11px;color:var(--ink-3);font-weight:600}
+.ver{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;color:var(--teal-deep)}
+.ver.pend{color:#A86E05}
+
+.files{display:flex;flex-direction:column;gap:8px}
+.file{display:flex;align-items:center;gap:11px;padding:11px 12px}
+.ficon{width:38px;height:44px;border-radius:9px;background:#FBE7E5;color:var(--poor);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8.5px;font-weight:800;gap:1px;flex:none}
+.ficon.doc{background:var(--good-bg);color:var(--good)}
+.file .tx{flex:1;min-width:0}
+.file .tx b{font-size:12.5px;font-weight:700;color:var(--navy-900);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file .tx span{font-size:11px;color:var(--ink-3);font-weight:600}
+.vbadge{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none}
+.vbadge.ok{background:var(--teal-soft);color:var(--teal-deep)}
+.vbadge.pend{background:var(--fair-bg);color:#A86E05}
+
+.timeline{padding:6px 14px 14px}
+.tl{display:flex;gap:12px;position:relative;padding-top:12px}
+.tl::before{content:"";position:absolute;left:5px;top:24px;bottom:-12px;width:1.5px;background:var(--line)}
+.tl:last-child::before{display:none}
+.tl .dt{width:12px;height:12px;border-radius:50%;border:2.5px solid var(--teal);background:#fff;flex:none;margin-top:3px;position:relative;z-index:1}
+.tl .dt.n{border-color:var(--navy-600)}
+.tl .tx{flex:1}
+.tl .tx .tm{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-3);font-weight:600}
+.tl .tx p{font-size:12.5px;color:var(--ink);line-height:1.45;margin-top:2px;font-weight:500}
+.tl .tx p b{font-weight:700;color:var(--navy-900)}
+
+.report-dock{position:absolute;left:0;right:0;bottom:88px;padding:14px 16px 12px;z-index:25;background:linear-gradient(180deg,rgba(243,245,249,0) 0%,rgba(243,245,249,.96) 30%)}
+.gen{display:flex;align-items:center;gap:10px}
+.gen-btn{flex:1;height:54px;border-radius:17px;background:var(--navy-800);color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;font-weight:800;letter-spacing:-.01em;box-shadow:0 14px 26px -12px rgba(15,37,71,.7);position:relative;overflow:hidden}
+.gen-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(127,224,214,.22) 50%,transparent 70%);animation:sheen 3.2s ease-in-out infinite}
+@keyframes sheen{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+.gen-btn .spk{color:#7FE0D6}
+.exp{width:54px;height:54px;border-radius:17px;background:#fff;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9.5px;font-weight:800;color:var(--navy-800)}
+.exp.pdf svg{color:var(--poor)}
+.exp.sh svg{color:var(--teal-deep)}
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="canvas">
+
+  <div class="deck-head">
+    <div>
+      <div class="k">Concept for Michael · Field Inspection App Enhancements</div>
+      <h1>Assess the property. Document the evidence.</h1>
+    </div>
+    <div class="r">Navy &amp; white system · teal accents<br><b>2 of 2 screens</b> · scroll within each device</div>
+  </div>
+
+  <div class="phones">
+
+    <!-- ================= SCREEN 1 ================= -->
+    <div class="phone-col">
+      <div class="cap"><span class="n">01</span><span class="t">Dashboard &amp; Condition Assessment</span></div>
+      <div class="device">
+        <div class="screen" data-screen-label="01 Dashboard">
+          <div class="island"></div>
+          <div class="statusbar light"><span>9:41</span><span class="sys"><i data-lucide="signal" class="i16"></i><i data-lucide="wifi" class="i16"></i><span class="bat"><i></i></span></span></div>
+
+          <div class="scroll">
+            <div class="hero">
+              <img src="assets/building.jpg" alt="Harborview Commerce Centre">
+              <div class="appbar">
+                <div class="icon-btn glass"><i data-lucide="arrow-left" class="i20"></i></div>
+                <div class="ttl">Inspection</div>
+                <div class="icon-btn glass"><i data-lucide="bell" class="i20"></i><span class="dot-badge"></span></div>
+              </div>
+              <div class="hero-body">
+                <span class="ref mono"><i data-lucide="hash" class="i12"></i>INS-2026-04817 · Annual PCA</span>
+                <h2>Harborview Commerce Centre</h2>
+                <div class="addr"><i data-lucide="map-pin" class="i14"></i>1250 Marina Blvd, San Diego, CA 92101</div>
+                <div class="facts"><span>Office</span><span>4F + B2</span><span>48,200 sq ft</span><span>Built 1998</span></div>
+              </div>
+            </div>
+
+            <div class="status-card">
+              <div class="stepper">
+                <div class="step done"><span class="b"><i data-lucide="check" class="i12"></i></span>Booked</div>
+                <div class="step-line done"></div>
+                <div class="step cur"><span class="b"></span>In Progress</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="b">3</span>Pending</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="b">4</span>Done</div>
+              </div>
+              <div class="inspector">
+                <span class="avatar">DR</span>
+                <span style="white-space:nowrap"><b>Dana Reyes</b> · Lead Inspector</span>
+                <span class="sync"><i data-lucide="cloud" class="i14"></i>Synced</span>
+              </div>
+            </div>
+
+            <!-- overview -->
+            <div class="sec">
+              <div class="overview">
+                <div class="card ov">
+                  <div class="lab">Overall condition</div>
+                  <div class="gauge">
+                    <svg viewBox="0 0 118 66">
+                      <path d="M9 59 A50 50 0 0 1 109 59" fill="none" stroke="#E7EBF1" stroke-width="10" stroke-linecap="round"/>
+                      <path d="M9 59 A50 50 0 0 1 109 59" fill="none" stroke="url(#gg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="52"/>
+                      <defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#E09A1A"/><stop offset="1" stop-color="#13A89E"/></linearGradient></defs>
+                    </svg>
+                    <div class="val"><b>2.9</b><span> / 4.0</span></div>
+                  </div>
+                  <div class="verdict"><span class="chip good"><span class="d"></span>Good · 2 areas flagged</span></div>
+                </div>
+                <div class="card ov">
+                  <div class="lab">Assessment progress</div>
+                  <div class="ring">
+                    <svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="35" fill="none" stroke="#E7EBF1" stroke-width="9"/><circle cx="42" cy="42" r="35" fill="none" stroke="#13A89E" stroke-width="9" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="73"/></svg>
+                    <div class="val"><div><b>4/6</b><span>sections</span></div></div>
+                  </div>
+                  <div class="segs"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+                  <div class="sub">67% · ~45 min remaining</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- quick actions -->
+            <div class="sec">
+              <div class="actions">
+                <div class="act primary"><span class="ib"><i data-lucide="camera" class="i20"></i></span><span>Add Photo<small>12 captured</small></span></div>
+                <div class="act"><span class="ib t"><i data-lucide="notebook-pen" class="i20"></i></span><span>Record Observation<small>9 logged</small></span></div>
+                <div class="act"><span class="ib r"><i data-lucide="triangle-alert" class="i20"></i></span><span>Document Issue<small>3 open</small></span></div>
+              </div>
+            </div>
+
+            <!-- categories -->
+            <div class="sec">
+              <div class="sec-h"><h3>Condition Assessment</h3><span class="meta">Tap to rate</span></div>
+              <div class="card cat-list">
+                <div class="cat open">
+                  <span class="ci"><i data-lucide="brick-wall" class="i20"></i><span class="ok"><i data-lucide="check" class="i12"></i></span></span>
+                  <div class="nm"><b>Structural</b><span class="warn">2 issues · 18 / 18 items</span></div>
+                  <span class="chip fair"><span class="d"></span>Fair</span>
+                  <div class="rate">
+                    <button><i style="background:var(--exc)"></i>Excellent</button>
+                    <button><i style="background:var(--good)"></i>Good</button>
+                    <button class="sel"><i style="background:var(--fair)"></i>Fair</button>
+                    <button><i style="background:var(--poor)"></i>Poor</button>
+                  </div>
+                  <div class="attn"><span class="chip poor">High</span>Shear crack at column C4, B2 parking level</div>
+                </div>
+                <div class="cat">
+                  <span class="ci"><i data-lucide="zap" class="i20"></i><span class="ok"><i data-lucide="check" class="i12"></i></span></span>
+                  <div class="nm"><b>Electrical</b><span>14 / 14 items · Panel MDP-1 serviced</span></div>
+                  <span class="chip good"><span class="d"></span>Good</span>
+                </div>
+                <div class="cat">
+                  <span class="ci" style="background:var(--poor-bg);color:var(--poor)"><i data-lucide="droplets" class="i20"></i><span class="ok"><i data-lucide="check" class="i12"></i></span></span>
+                  <div class="nm"><b>Plumbing</b><span class="warn">Active leak · 3F restroom riser</span></div>
+                  <span class="chip poor"><span class="d"></span>Poor</span>
+                </div>
+                <div class="cat">
+                  <span class="ci"><i data-lucide="fan" class="i20"></i><span class="ok"><i data-lucide="check" class="i12"></i></span></span>
+                  <div class="nm"><b>HVAC</b><span>RTU-1–4 · Replaced 2021</span></div>
+                  <span class="chip exc"><span class="d"></span>Excellent</span>
+                </div>
+                <div class="cat">
+                  <span class="ci"><i data-lucide="sofa" class="i20"></i></span>
+                  <div class="nm"><b>Interior</b><span>7 / 22 items · In progress</span></div>
+                  <span class="chip mute">Rate</span>
+                </div>
+                <div class="cat">
+                  <span class="ci"><i data-lucide="house" class="i20"></i></span>
+                  <div class="nm"><b>Exterior</b><span>Not started · Roof &amp; façade</span></div>
+                  <i data-lucide="chevron-right" class="i18" style="color:var(--ink-3)"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- observations -->
+            <div class="sec">
+              <div class="obs-card">
+                <div class="obs-h"><i data-lucide="notebook-pen" class="i20" style="color:#7FE0D6"></i><b>Inspection Observations</b><span>9 today</span></div>
+                <div class="obs-input">
+                  <div class="ph"><em>Interior · 2F corridor — ceiling tile staining near grid line D7, approx. 600×600mm</em><span class="caret"></span></div>
+                  <div class="obs-tools">
+                    <span class="tb sq"><i data-lucide="mic" class="i16"></i></span>
+                    <span class="tb sq"><i data-lucide="camera" class="i16"></i></span>
+                    <span class="tb"><i data-lucide="map-pin" class="i14"></i>2F · D7</span>
+                    <span class="save"><i data-lucide="plus" class="i14"></i>Add</span>
+                  </div>
+                </div>
+                <div class="recent">
+                  <div class="rc"><img src="assets/crack3.jpg" alt=""><div class="tx"><b>Diagonal crack, column C4 — B2 level</b><span>Structural · 10:42 · 3 photos</span></div><span class="chip poor" style="height:22px">High</span></div>
+                  <div class="rc"><img src="assets/crack1.jpg" alt=""><div class="tx"><b>Efflorescence on retaining wall, north</b><span>Structural · 10:18 · 2 photos</span></div><span class="chip fair" style="height:22px">Med</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tab"><i data-lucide="layout-grid" class="i22"></i>Home</div>
+            <div class="tab on"><i data-lucide="clipboard-list" class="i22"></i>Inspections</div>
+            <div class="tab"><span class="tab-fab"><i data-lucide="scan-line" class="i22"></i></span></div>
+            <div class="tab"><i data-lucide="file-text" class="i22"></i>Reports</div>
+            <div class="tab"><i data-lucide="user-round" class="i22"></i>Profile</div>
+          </div>
+          <div class="homebar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SCREEN 2 ================= -->
+    <div class="phone-col">
+      <div class="cap"><span class="n">02</span><span class="t">Documentation &amp; Annotated Photo Report</span></div>
+      <div class="device">
+        <div class="screen s2" data-screen-label="02 Documentation">
+          <div class="island"></div>
+          <div class="statusbar"><span>9:41</span><span class="sys"><i data-lucide="signal" class="i16"></i><i data-lucide="wifi" class="i16"></i><span class="bat"><i></i></span></span></div>
+
+          <div class="scroll" style="padding-bottom:180px">
+            <div class="appbar">
+              <div class="icon-btn"><i data-lucide="arrow-left" class="i20"></i></div>
+              <div class="tt"><b>Finding F-03 · Structural</b><span class="mono"><i data-lucide="hash" class="i12"></i>INS-2026-04817 · B2 Parking</span></div>
+              <div class="icon-btn"><i data-lucide="ellipsis" class="i20"></i></div>
+            </div>
+            <div class="seg"><div class="on">Evidence<em>3</em></div><div>Findings<em>9</em></div><div>Compliance<em>8/10</em></div></div>
+
+            <!-- annotated photo -->
+            <div class="sec" style="margin-top:14px">
+              <div class="card photo-card">
+                <div class="ph-wrap">
+                  <img src="assets/crack3.jpg" alt="Crack at column C4">
+                  <svg class="anno" viewBox="0 0 348 248" preserveAspectRatio="none">
+                    <ellipse cx="190" cy="138" rx="34" ry="62" fill="rgba(217,71,59,.14)" stroke="#D9473B" stroke-width="2.5" stroke-dasharray="6 4"/>
+                    <path d="M92 196 L160 158" stroke="#FFD24D" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M160 158 L148 158 M160 158 L155 169" stroke="#FFD24D" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="214" y1="40" x2="236" y2="40" stroke="#fff" stroke-width="2"/>
+                    <line x1="214" y1="34" x2="214" y2="46" stroke="#fff" stroke-width="2"/>
+                    <line x1="236" y1="34" x2="236" y2="46" stroke="#fff" stroke-width="2"/>
+                    <circle cx="225" cy="40" r="0"/>
+                  </svg>
+                  <div class="ph-top">
+                    <span class="pill-dark"><i data-lucide="pen-line" class="i12"></i>Annotating · 3 markers</span>
+                    <span class="pill-dark"><i data-lucide="maximize-2" class="i12"></i></span>
+                  </div>
+                  <div class="tag" style="left:236px;top:120px"><span class="n" style="background:var(--poor)">1</span><div>Spalling<small>~120 mm, rebar exposed?</small></div></div>
+                  <div class="tag" style="left:244px;top:28px"><span class="n" style="background:var(--navy-700)">2</span><div>4.2 mm<small>crack width</small></div></div>
+                  <div class="tag" style="left:20px;top:176px;transform:translateY(-100%)"><span class="n" style="background:#C79400">3</span><div>Propagation<small>toward slab</small></div></div>
+                  <div class="ph-meta">
+                    <span class="stamp">08 NOV 2026 · 10:42:17 · IMG_0417<br>32.7091°N 117.1712°W</span>
+                  </div>
+                </div>
+                <div class="anno-tools">
+                  <span class="at on"><i data-lucide="circle-dashed" class="i18"></i></span>
+                  <span class="at"><i data-lucide="move-up-right" class="i18"></i></span>
+                  <span class="at"><i data-lucide="pencil" class="i18"></i></span>
+                  <span class="at"><i data-lucide="ruler" class="i18"></i></span>
+                  <span class="at"><i data-lucide="type" class="i18"></i></span>
+                  <span class="at"><i data-lucide="undo-2" class="i18"></i></span>
+                  <span class="swatches"><i class="on" style="background:var(--poor)"></i><i style="background:#FFD24D"></i><i style="background:var(--navy-700)"></i></span>
+                </div>
+              </div>
+              <div class="strip">
+                <div class="cap-tile cam"><i data-lucide="camera" class="i22"></i>Capture</div>
+                <div class="cap-tile up"><i data-lucide="image-up" class="i20"></i>Upload</div>
+                <div class="thumb sel"><img src="assets/crack3.jpg" alt=""><span class="cnt">3</span></div>
+                <div class="thumb"><img src="assets/crack2.jpg" alt=""><span class="cnt">1</span></div>
+                <div class="thumb"><img src="assets/crack1.jpg" alt=""></div>
+              </div>
+            </div>
+
+            <!-- observation entry -->
+            <div class="sec">
+              <div class="sec-h"><h3>Maintenance Observation</h3><span class="meta">Auto-saved 10:44</span></div>
+              <div class="card form">
+                <div class="fl">Issue</div>
+                <div class="field title">Diagonal shear crack with spalling — column C4</div>
+                <div class="fl" style="margin-top:12px">Description <span><i data-lucide="mic" class="i12" style="vertical-align:-2px"></i> Dictated</span></div>
+                <div class="field">Diagonal crack ~1.1 m long running from column capital toward slab soffit. Max width 4.2 mm. Concrete spalled over ~120 mm with possible rebar exposure. Rust staining present.</div>
+                <div class="row2">
+                  <div class="mini"><small>Location</small><b><i data-lucide="map-pin" class="i12"></i>B2 · Grid C4</b></div>
+                  <div class="mini"><small>Component</small><b><i data-lucide="columns-3" class="i12"></i>RC column</b></div>
+                </div>
+                <div class="fl" style="margin-top:14px">Severity</div>
+                <div class="sev">
+                  <div><span class="bars"><i style="height:4px;background:var(--exc)"></i><i style="height:7px"></i><i style="height:10px"></i><i style="height:12px"></i></span>Low</div>
+                  <div><span class="bars"><i style="height:4px;background:var(--fair)"></i><i style="height:7px;background:var(--fair)"></i><i style="height:10px"></i><i style="height:12px"></i></span>Medium</div>
+                  <div class="sel"><span class="bars"><i class="on" style="height:4px"></i><i class="on" style="height:7px"></i><i class="on" style="height:10px"></i><i style="height:12px"></i></span>High</div>
+                  <div><span class="bars"><i style="height:4px;background:var(--crit)"></i><i style="height:7px;background:var(--crit)"></i><i style="height:10px;background:var(--crit)"></i><i style="height:12px;background:var(--crit)"></i></span>Critical</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- recommended actions -->
+            <div class="sec">
+              <div class="sec-h"><h3>Recommended Actions</h3><a>+ Add</a></div>
+              <div class="card recs" style="overflow:hidden">
+                <div class="rec"><span class="num">1</span><div class="tx"><b>Engage licensed structural engineer for load assessment</b><span><em><i data-lucide="clock" class="i12"></i>Within 7 days</em><span class="chip poor" style="height:20px;font-size:10.5px">Immediate</span></span></div></div>
+                <div class="rec"><span class="num">2</span><div class="tx"><b>Install tell-tale crack monitor; re-measure in 30 days</b><span><em><i data-lucide="user-round" class="i12"></i>Facilities team</em><em><i data-lucide="clock" class="i12"></i>14 days</em></span></div></div>
+                <div class="rec"><span class="num">3</span><div class="tx"><b>Epoxy injection &amp; patch repair per engineer's spec</b><span><em><i data-lucide="wrench" class="i12"></i>Contractor</em><em><i data-lucide="clock" class="i12"></i>60 days</em></span></div></div>
+                <div class="cost"><span>Estimated remediation</span><b>$2,400 – $3,800</b></div>
+              </div>
+            </div>
+
+            <!-- compliance -->
+            <div class="sec">
+              <div class="sec-h"><h3>Compliance Documentation</h3><span class="meta">8 of 10</span></div>
+              <div class="card" style="overflow:hidden">
+                <div class="comp-h">
+                  <span class="ci" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--teal-soft);color:var(--teal-deep)"><i data-lucide="shield-check" class="i20"></i></span>
+                  <div class="pr"><b>ASTM E2018-24 · PCA baseline</b><div class="bar"><i style="width:80%"></i></div></div>
+                </div>
+                <div class="chk"><span class="box on"><i data-lucide="check" class="i14"></i></span><div class="tx"><b>Fire egress paths clear</b><span>NFPA 101 · Verified 09:52</span></div><span class="ver"><i data-lucide="badge-check" class="i14"></i>Verified</span></div>
+                <div class="chk"><span class="box on"><i data-lucide="check" class="i14"></i></span><div class="tx"><b>Elevator certificate current</b><span>State cert. exp. 03 / 2027</span></div><span class="ver"><i data-lucide="paperclip" class="i14"></i>Attached</span></div>
+                <div class="chk"><span class="box on"><i data-lucide="check" class="i14"></i></span><div class="tx"><b>Building permit history reviewed</b><span>City of San Diego DSD records</span></div><span class="ver"><i data-lucide="badge-check" class="i14"></i>Verified</span></div>
+                <div class="chk"><span class="box"></span><div class="tx"><b>ADA accessible route survey</b><span>Required for Interior section</span></div><span class="ver pend"><i data-lucide="clock" class="i14"></i>Pending</span></div>
+              </div>
+            </div>
+
+            <!-- attachments -->
+            <div class="sec">
+              <div class="sec-h"><h3>Attachments</h3><a>+ Attach</a></div>
+              <div class="files">
+                <div class="card file"><span class="ficon"><i data-lucide="file-text" class="i16"></i>PDF</span><div class="tx"><b>Structural_Drawings_S-201_1998.pdf</b><span>4.2 MB · Owner supplied</span></div><span class="vbadge ok"><i data-lucide="shield-check" class="i16"></i></span></div>
+                <div class="card file"><span class="ficon"><i data-lucide="file-text" class="i16"></i>PDF</span><div class="tx"><b>Elevator_Certificate_2026.pdf</b><span>620 KB · Signature valid</span></div><span class="vbadge ok"><i data-lucide="shield-check" class="i16"></i></span></div>
+                <div class="card file"><span class="ficon doc"><i data-lucide="file-spreadsheet" class="i16"></i>XLS</span><div class="tx"><b>Fire_Alarm_Test_Log_Q3.xlsx</b><span>88 KB · Awaiting verification</span></div><span class="vbadge pend"><i data-lucide="hourglass" class="i16"></i></span></div>
+              </div>
+            </div>
+
+            <!-- notes -->
+            <div class="sec">
+              <div class="sec-h"><h3>Inspection Notes</h3><span class="meta">Today</span></div>
+              <div class="card timeline">
+                <div class="tl"><span class="dt"></span><div class="tx"><span class="tm">10:44 · DANA REYES</span><p>Severity raised to <b>High</b> — rust staining suggests ongoing moisture ingress from slab above.</p></div></div>
+                <div class="tl"><span class="dt n"></span><div class="tx"><span class="tm">10:42 · PHOTO</span><p>3 photos captured &amp; annotated at grid C4. Crack gauge reading 4.2 mm.</p></div></div>
+                <div class="tl"><span class="dt n"></span><div class="tx"><span class="tm">10:31 · ON SITE</span><p>Building engineer <b>M. Okafor</b> confirmed no prior repair records for C4.</p></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="report-dock">
+            <div class="gen">
+              <div class="gen-btn"><i data-lucide="sparkles" class="i18 spk"></i>Generate Inspection Report</div>
+              <div class="exp pdf"><i data-lucide="file-down" class="i18"></i>PDF</div>
+              <div class="exp sh"><i data-lucide="share-2" class="i18"></i>Share</div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tab"><i data-lucide="layout-grid" class="i22"></i>Home</div>
+            <div class="tab on"><i data-lucide="clipboard-list" class="i22"></i>Inspections</div>
+            <div class="tab"><span class="tab-fab"><i data-lucide="scan-line" class="i22"></i></span></div>
+            <div class="tab"><i data-lucide="file-text" class="i22"></i>Reports</div>
+            <div class="tab"><i data-lucide="user-round" class="i22"></i>Profile</div>
+          </div>
+          <div class="homebar"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+  lucide.createIcons();
+  // simple interactivity on rating + severity
+  document.querySelectorAll('.rate button').forEach(b=>b.addEventListener('click',()=>{
+    b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+  }));
+  function fit(){
+    const c=document.getElementById('canvas');
+    const s=Math.min(window.innerWidth/1300, window.innerHeight/1100);
+    c.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit);fit();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
